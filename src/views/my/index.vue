@@ -17,7 +17,38 @@
         <span class="text">登录 / 注册</span>
       </div>
     </div>
-
+    <div class="header user-info">
+      <div class="base-info">
+        <div class="left">
+          <van-image
+            :src="require('../../assets/u=2550039893,2946925800&fm=111&gp=0 (1).jpg')"
+            class="avatar" round
+          />
+          <span class="name">拟稿</span>
+        </div>
+        <div class="right">
+          <van-button round size="mini">编辑资料</van-button>
+        </div>
+      </div>
+      <div class="data-stats">
+        <div class="data-item">
+          <span class="count">10</span>
+          <span class="text">头条</span>
+        </div>
+         <div class="data-item">
+          <span class="count">10</span>
+          <span class="text">关注</span>
+        </div>
+         <div class="data-item">
+          <span class="count">10</span>
+          <span class="text">粉丝</span>
+        </div>
+         <div class="data-item">
+          <span class="count">10</span>
+          <span class="text">获赞</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -54,7 +85,48 @@ export default {
       }
     }
   }
-
+  .user-info {
+    .base-info {
+      height: 231px;
+      padding: 76px 32px 23px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .left {
+        display: flex;
+        align-items: center;
+        .avatar {
+          width: 132px;
+          height: 132px;
+          border: 4px solid #fff;
+          margin-right: 23px;
+        }
+        .name {
+          font-size: 30px;
+          color: #fff;
+        }
+      }
+    }
+    .data-stats {
+      display: flex;
+      .data-item {
+        height: 130px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        .count {
+          font-size: 36px;
+        }
+        .text {
+          font-size: 23px;
+        }
+      }
+    }
+  }
   .grid-nav {
     .grid-item {
       height: 141px;
