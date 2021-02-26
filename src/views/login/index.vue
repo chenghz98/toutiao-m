@@ -1,7 +1,9 @@
 <template>
   <div class="login-container">
     <!-- 头部导航栏区域 -->
-    <van-nav-bar class="page-nav-bar" title="登录" />
+    <van-nav-bar class="page-nav-bar" title="登录">
+      <van-icon slot="left" name="cross" @click="$router.back()"></van-icon>
+    </van-nav-bar>
 
     <!-- 登录表单区域 -->
     <van-form @submit="onSubmit" ref="loginForm">
@@ -141,8 +143,11 @@ export default {
   .van-form {
     height: 182px;
   }
-  .page-nav-bar {
-    height: 128px;
+  .van-nav-bar{
+    .van-icon{
+      font-size: 40px;
+      color: #fff;
+    }
   }
   .toutiao {
     font-size: 37px;
