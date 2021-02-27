@@ -46,7 +46,7 @@
         >
       </van-field>
       <div class="login-btn-wrap">
-        <van-button block type="info" native-type="submit">登录</van-button>
+        <van-button block type="info" native-type="submit" >登录</van-button>
       </div>
     </van-form>
   </div>
