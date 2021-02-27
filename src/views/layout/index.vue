@@ -19,13 +19,14 @@
       </van-tabbar-item>
       <van-tabbar-item to="/my">
         <i slot="icon" class="toutiao toutiao-wode"></i>
-        <span class="text">我的</span>
+        <span class="text">{{user?'我的':'未登录'}}</span>
       </van-tabbar-item>
     </van-tabbar>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'LayoutIndex',
   components: {},
@@ -35,7 +36,9 @@ export default {
       active: 0
     }
   },
-  computed: {},
+  computed: {
+    ...mapState(['user'])
+  },
   watch: {},
   created() {},
   mounted() {},

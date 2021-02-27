@@ -1,7 +1,42 @@
 <template>
   <div class="my-container">
+    <div class="header user-info" v-if="user">
+      <div class="base-info">
+        <div class="left">
+          <van-image
+            :src="
+              require('../../assets/u=2550039893,2946925800&fm=111&gp=0 (1).jpg')
+            "
+            class="avatar"
+            round
+          />
+          <span class="name">拟稿</span>
+        </div>
+        <div class="right">
+          <van-button round size="mini">编辑资料</van-button>
+        </div>
+      </div>
+      <div class="data-stats">
+        <div class="data-item">
+          <span class="count">10</span>
+          <span class="text">头条</span>
+        </div>
+        <div class="data-item">
+          <span class="count">10</span>
+          <span class="text">关注</span>
+        </div>
+        <div class="data-item">
+          <span class="count">10</span>
+          <span class="text">粉丝</span>
+        </div>
+        <div class="data-item">
+          <span class="count">10</span>
+          <span class="text">获赞</span>
+        </div>
+      </div>
+    </div>
     <!-- 未登录头部 -->
-    <div class="header not-login">
+    <div class="header not-login" v-else>
       <div
         class="login-btn"
         @click="
@@ -17,44 +52,31 @@
         <span class="text">登录 / 注册</span>
       </div>
     </div>
-    <div class="header user-info">
-      <div class="base-info">
-        <div class="left">
-          <van-image
-            :src="require('../../assets/u=2550039893,2946925800&fm=111&gp=0 (1).jpg')"
-            class="avatar" round
-          />
-          <span class="name">拟稿</span>
-        </div>
-        <div class="right">
-          <van-button round size="mini">编辑资料</van-button>
-        </div>
-      </div>
-      <div class="data-stats">
-        <div class="data-item">
-          <span class="count">10</span>
-          <span class="text">头条</span>
-        </div>
-         <div class="data-item">
-          <span class="count">10</span>
-          <span class="text">关注</span>
-        </div>
-         <div class="data-item">
-          <span class="count">10</span>
-          <span class="text">粉丝</span>
-        </div>
-         <div class="data-item">
-          <span class="count">10</span>
-          <span class="text">获赞</span>
-        </div>
-      </div>
-    </div>
+    <!-- 已登录头部 -->
+
+    <van-grid  :column-num="2" class="grid_nav">
+      <van-grid-item class="grid_item">
+        <i slot="icon" class="toutiao toutiao-shoucang"></i>
+        <span slot="text" class="text">收藏</span>
+      </van-grid-item>
+      <van-grid-item class="grid_item">
+        <i slot="icon" class="toutiao toutiao-lishi"></i>
+        <span slot="text" class="text">收藏</span>
+      </van-grid-item>
+    </van-grid>
+    <van-cell title="消息通知"  is-link/>
+    <van-cell title="小智同学" class="mb-9" is-link/>
+    <van-cell title="退出登录" class="logout-cell" v-if="user"/>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
-  name: 'MyIndex'
+  name: 'MyIndex',
+  computed: {
+    ...mapState(['user'])
+  }
 }
 </script>
 
@@ -127,8 +149,9 @@ export default {
       }
     }
   }
-  .grid-nav {
-    .grid-item {
+  .grid_nav {
+    margin-bottom: 9px;
+    .grid_item {
       height: 141px;
       i.toutiao {
         font-size: 45px;
