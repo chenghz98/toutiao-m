@@ -1,8 +1,14 @@
 <template>
   <div class="channel-edit">
     <van-cell title="我的频道" :border="false">
-      <van-button size="mini" round type="danger" plain class="editbtn"
-        >编辑</van-button
+      <van-button
+        size="mini"
+        round
+        type="danger"
+        plain
+        class="editbtn"
+        @click="isEdit = !isEdit"
+        >{{isEdit?'完成':'编辑'}}</van-button
       >
     </van-cell>
     <van-grid :gutter="10">
@@ -10,21 +16,24 @@
         class="channel-item"
         v-for="(channel, index) in myChannels"
         :key="index"
-        icon="clear"
-        ><span slot="text" class="text" :class="{ active: active === index }">{{
-          channel.name
-        }}</span></van-grid-item
       >
+        <span slot="text" class="text" :class="{ active: active === index }">{{
+          channel.name
+        }}</span>
+        <van-icon name="clear" slot="icon" v-show="isEdit&&!fixedChannels.includes(channel.id)"></van-icon
+      ></van-grid-item>
     </van-grid>
     <van-cell title="频道推荐" :border="false"></van-cell>
     <van-grid class="recommend-grid" :gutter="10">
       <van-grid-item
-        class="channel-item"
-        v-for="channel in recommendChannels"
-        :key="channel.id"
-        :text="channel.name"
+        class="grid-item"
+        v-for="(channel, index) in recommendChannels"
+        :key="index"
         icon="plus"
-      />
+        :text="channel.name"
+        @click="onAddChannel(channel)"
+      >
+      </van-grid-item>
     </van-grid>
   </div>
 </template>
@@ -46,10 +55,26 @@ export default {
   },
   data() {
     return {
-      allChannels: []
+      allChannels: [],
+      isEdit: false,
+      fixedChannels: [0]
     }
   },
   computed: {
+    /* recommendChannels() {
+      const channels = []
+      this.allChannels.forEach(channel => {
+        // find 找到符合条件的第一个就返回，后面就不再查找！
+        const ret = this.myChannels.find(
+          myChannel => myChannel.id === channel.id
+        )
+        // 我的频道没有找到 channel，则收集
+        if (!ret) {
+          channels.push(channel)
+        }
+      })
+      return channels
+    } */
     recommendChannels() {
       return this.allChannels.filter(channel => {
         const mychannel = this.myChannels.find(myChannel => {
@@ -72,6 +97,9 @@ export default {
       } catch (error) {
         this.$toast('获取频道列表数据失败')
       }
+    },
+    onAddChannel(channel) {
+      this.myChannels.push(channel)
     }
   }
 }
@@ -85,6 +113,9 @@ export default {
   .channel-item {
     height: 86px;
     /deep/ .van-grid-item__content {
+      .van-grid-item__icon-wrapper {
+        position: unset;
+      }
       background-color: #f5f5f6;
       .van-grid-item__text,
       .text {
@@ -119,7 +150,8 @@ export default {
       margin-right: 6px;
     }
 
-    .van-grid-item__text {
+    .van-grid-item__text,
+    .text-wrap {
       font-size: 28px;
       margin-top: 0;
     }
