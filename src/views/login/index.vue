@@ -2,7 +2,7 @@
   <div class="login-container">
     <!-- 头部导航栏区域 -->
     <van-nav-bar class="page-nav-bar" title="登录">
-      <van-icon slot="left" name="cross" @click="$router.back()"></van-icon>
+      <van-icon slot="left" name="cross" v-if="this.$route.query.redirect" @click="$router.back()"></van-icon>
     </van-nav-bar>
 
     <!-- 登录表单区域 -->
@@ -46,7 +46,7 @@
         >
       </van-field>
       <div class="login-btn-wrap">
-        <van-button block type="info" native-type="submit" >登录</van-button>
+        <van-button block type="info" native-type="submit">登录</van-button>
       </div>
     </van-form>
   </div>
@@ -102,6 +102,7 @@ export default {
         const { data } = await login(user)
         this.$store.commit('setUser', data.data)
         this.$toast.success('登陆成功')
+        this.$router.push(this.$route.query.redirect || '/')
         console.log(data)
       } catch (err) {
         if (err.response.status === 400) {
@@ -143,8 +144,8 @@ export default {
   .van-form {
     height: 182px;
   }
-  .van-nav-bar{
-    .van-icon{
+  .van-nav-bar {
+    .van-icon {
       font-size: 40px;
       color: #fff;
     }

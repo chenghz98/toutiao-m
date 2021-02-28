@@ -1,16 +1,15 @@
 <template>
   <div class="my-container">
+    <!-- 已登录 -->
     <div class="header user-info" v-if="user">
       <div class="base-info">
         <div class="left">
           <van-image
-            :src="
-              require('../../assets/u=2550039893,2946925800&fm=111&gp=0 (1).jpg')
-            "
+            :src="userInfo.photo"
             class="avatar"
             round
           />
-          <span class="name">拟稿</span>
+          <span class="name">{{userInfo.name}}</span>
         </div>
         <div class="right">
           <van-button round size="mini">编辑资料</van-button>
@@ -18,19 +17,19 @@
       </div>
       <div class="data-stats">
         <div class="data-item">
-          <span class="count">10</span>
+          <span class="count">{{userInfo.art_count}}</span>
           <span class="text">头条</span>
         </div>
         <div class="data-item">
-          <span class="count">10</span>
+          <span class="count">{{userInfo.follow_count}}</span>
           <span class="text">关注</span>
         </div>
         <div class="data-item">
-          <span class="count">10</span>
+          <span class="count">{{userInfo.fans_count}}</span>
           <span class="text">粉丝</span>
         </div>
         <div class="data-item">
-          <span class="count">10</span>
+          <span class="count">{{userInfo.like_count}}</span>
           <span class="text">获赞</span>
         </div>
       </div>
@@ -54,7 +53,7 @@
     </div>
     <!-- 已登录头部 -->
 
-    <van-grid  :column-num="2" class="grid_nav">
+    <van-grid :column-num="2" class="grid_nav">
       <van-grid-item class="grid_item">
         <i slot="icon" class="toutiao toutiao-shoucang"></i>
         <span slot="text" class="text">收藏</span>
@@ -64,18 +63,61 @@
         <span slot="text" class="text">收藏</span>
       </van-grid-item>
     </van-grid>
-    <van-cell title="消息通知"  is-link/>
-    <van-cell title="小智同学" class="mb-9" is-link/>
-    <van-cell title="退出登录" class="logout-cell" v-if="user"/>
+    <van-cell title="消息通知" is-link />
+    <van-cell title="小智同学" class="mb-9" is-link />
+    <van-cell
+      title="退出登录"
+      class="logout-cell"
+      v-if="user"
+      @click="onLogout"
+    />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import { getUserInfo } from '@/api/user'
 export default {
   name: 'MyIndex',
+  data() {
+    return {
+      userInfo: {}
+    }
+  },
   computed: {
     ...mapState(['user'])
+  },
+  created() {
+    if (this.user) {
+      this.loadUser()
+    }
+  },
+  methods: {
+    onLogout() {
+      // ! 退出登录确认
+      this.$dialog
+        .confirm({
+          title: '确认退出吗？'
+        })
+        .then(() => {
+          // 确认
+          // TODO清除登录状态（容器中的 user 和本地的 user）
+          this.$store.commit('setUser', null)
+        })
+        .catch(() => {
+          // 关闭
+        })
+    },
+    async loadUser() {
+      try {
+        const { data } = await getUserInfo()
+        console.log(data)
+        this.userInfo = data.data
+      } catch (error) {
+        console.log(error)
+        this.$toast('获取数据失败')
+      }
+    }
   }
 }
 </script>
