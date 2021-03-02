@@ -40,7 +40,9 @@
 </template>
 
 <script>
-import { getAllChannels } from '@/api/channel'
+import { getAllChannels, addUserChannel, deleteUserChannel } from '@/api/channel'
+import { mapState } from 'vuex'
+import { setItem } from '@/utils/storage.js'
 export default {
   name: 'ChannelEdit',
   components: {},
@@ -83,7 +85,9 @@ export default {
         })
         return !mychannel
       })
-    }
+    },
+    // 获取user
+    ...mapState(['user'])
   },
   watch: {},
   created() {
@@ -99,15 +103,56 @@ export default {
         this.$toast('获取频道列表数据失败')
       }
     },
-    onAddChannel(channel) {
-      this.myChannels.push(channel)
+    // 点击添加频道
+    async onAddChannel (channels) {
+      this.myChannels.push(channels)
+      if (this.user) {
+        try {
+          // 已登录，数据存储到线上
+          await addUserChannel({
+            id: channels.id, // 频道 id
+            seq: this.myChannels.length // 频道的 序号
+          })
+          this.$toast('添加成功')
+        } catch (err) {
+          this.$toast('保存失败')
+        }
+      } else {
+        // 未登陆
+        setItem('TOUTIAO_CHANNELS', this.myChannels)
+      }
     },
     onMyChannelClick(channel, index) {
       if (this.isEdit) {
         // 编辑状态
+        // 固定频道 推荐频道不可删除
+        if (this.fixedChannels.includes(index)) return
+        if (index <= this.active) {
+          // 当删除的频道在高亮的频道前时,为了是删除后依旧是当前频道高亮,要是当前高亮active-1
+          this.$emit('updata-active', this.active - 1, true)
+        }
+        // 删除频道
+        this.myChannels.splice(index, 1)
+        // 删除数据持久化
+        this.deleteChannel(channel)
       } else {
         // 非编辑状态
-        this.$emit('updata-active', index)
+        // 切换频道
+        // 第三个参数true,false 是用来判断是否关闭弹出层
+        this.$emit('updata-active', index, false)
+      }
+    },
+    async deleteChannel(channel) {
+      try {
+        if (this.user) {
+          await deleteUserChannel(channel.id)
+        } else {
+          // 未登录，将数据存储到本地
+          setItem('channles', this.userChannels)
+        }
+      } catch (error) {
+        console.log(error)
+        this.$toast('删除频道失败，请稍后重试')
       }
     }
   }
