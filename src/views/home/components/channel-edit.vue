@@ -16,6 +16,7 @@
         class="channel-item"
         v-for="(channel, index) in myChannels"
         :key="index"
+        @click="onMyChannelClick(channel,index)"
       >
         <span slot="text" class="text" :class="{ active: active === index }">{{
           channel.name
@@ -100,6 +101,14 @@ export default {
     },
     onAddChannel(channel) {
       this.myChannels.push(channel)
+    },
+    onMyChannelClick(channel, index) {
+      if (this.isEdit) {
+        // 编辑状态
+      } else {
+        // 非编辑状态
+        this.$emit('updata-active', index)
+      }
     }
   }
 }

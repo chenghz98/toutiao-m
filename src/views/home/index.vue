@@ -47,7 +47,7 @@
       closeable
       close-icon-position="top-left"
       >
-      <channel-edit :myChannels="channels" :active="active"></channel-edit>
+      <channel-edit :myChannels="channels" :active="active" @update-active="onUpdateActive(index)"></channel-edit>
       </van-popup
     >
   </div>
@@ -87,8 +87,13 @@ export default {
       } catch (err) {
         this.$toast('获取频道数据失败')
       }
+    },
+    onUpdateActive(index) {
+      this.active = index
+      this.isEditChannelShow = false
     }
   }
+
 }
 </script>
 
