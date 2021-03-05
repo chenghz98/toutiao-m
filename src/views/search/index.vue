@@ -1,6 +1,6 @@
 <template>
   <div class="search-container">
-    <form action="/">
+    <form class="search-form" action="/">
       <van-search
         v-model="searchText"
         show-action
@@ -8,14 +8,20 @@
         @search="onSearch"
         @cancel="onCancel"
         background="#3296fa"
+        @focus="isResultShow=false"
       />
     </form>
     <!-- 搜索结果 -->
-    <search-result v-if="isResultShow"></search-result>
+    <search-result v-if="isResultShow" :search-text="searchText"></search-result>
     <!-- 搜索建议 -->
-    <search-suggestion v-else-if="searchText" :search-text="searchText"></search-suggestion>
+    <search-suggestion v-else-if="searchText" :search-text="searchText" @search="onSearch" ></search-suggestion>
     <!-- 搜索历史 -->
-    <search-history v-else></search-history>
+    <search-history
+    v-else
+    :search-histories="searchHistories"
+    @search="onSearch"
+    @delete-search-histories="searchHistories=[]"
+    ></search-history>
 
   </div>
 </template>
@@ -25,6 +31,7 @@
 import SearchHistory from './components/search-history.vue'
 import SearchResult from './components/search-result.vue'
 import SearchSuggestion from './components/search-suggestion.vue'
+import { setItem, getItem } from '@/utils/storage'
 export default {
   name: 'SearchIndex',
   components: {
@@ -37,17 +44,34 @@ export default {
   data() {
     return {
       searchText: '',
-      isResultShow: false
+      isResultShow: false,
+      // TODO 2 用getItem方法将本地存储的TOUTIAO_SEARCH_HISTORIES取出赋给searchHistories,
+      // 如果TOUTIAO_SEARCH_HISTORIES为空,将searchHistories赋值为[]
+      searchHistories: getItem('TOUTIAO_SEARCH_HISTORIES') || []
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    // 搜索历史的数据持久化
+    // TODO 1 监听searchHistories的数据变化,调用setItem将变化的值存储到本地存储
+    searchHistories(value) {
+      setItem('TOUTIAO_SEARCH_HISTORIES', value)
+    }
+  },
   created() {},
   mounted() {},
   methods: {
     onSearch(val) {
-      this.$toast(val)
+      this.searchText = val
       this.isResultShow = true
+      // 判断searchHistories是否已有当前搜索的值,
+      const index = this.searchHistories.indexOf(val)
+      // 如果有重复历史记录删除重复的记录
+      if (index !== -1) {
+        this.searchHistories.splice(index, 1)
+      }
+      // 将当前记录置于首部
+      this.searchHistories.unshift(val)
     },
     onCancel() {
       this.$router.back()
@@ -57,8 +81,16 @@ export default {
 </script>
 <style scoped lang="less">
 .search-container {
+  padding-top: 108px;
   .van-search__action {
     color: #fff;
+  }
+  .search-form{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
   }
 }
 </style>
