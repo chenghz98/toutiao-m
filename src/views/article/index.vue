@@ -35,24 +35,22 @@
           <div slot="label" class="publish-date">
             {{ article.pubdate | relativeTime }}
           </div>
-           <van-button
-            class="follow-btn"
-            round
-            size="small"
-            v-if="article.is_follow"
-          >已关注</van-button>
-          <van-button
-            class="follow-btn"
-            type="info"
-            color="#3296fa"
-            round
-            size="small"
-            icon="plus"
-            @click="onFollow"
-            v-else
-            >关注</van-button
-          >
-
+          <!-- //TODO关注按钮组件出口 -->
+          <!-- 在模板中,$event就代表事件参数 -->
+          <!-- props传参 :is_followed="article.is_followed"
+          自定义事件 @update-follow="article.is_followed = $event"
+          在组件上使用 v-model :
+          //!一个组件上只能有一个v-model
+           如果多个数据需要实现类似v-model的作用,可以使用.sync修饰符(https://cn.vuejs.org/v2/guide/components-custom-events.html#sync-%E4%BF%AE%E9%A5%B0%E7%AC%A6)
+          默认: 传参 v-model="value"
+                自定义事件 @input="article.is_followed = $event"
+          如果想修改默认 属性和事件名 需要在子组件中添加 model{}来自定义
+           -->
+        <follow-user
+        class="follow-btn"
+        :userId="article.aut_id"
+        v-model="article.is_followed"
+        ></follow-user>
         </van-cell>
         <!-- /用户信息 -->
 
@@ -102,7 +100,8 @@
 import { getArticleById } from '@/api/article'
 import './github-markdown.css'
 import { ImagePreview } from 'vant'
-ImagePreview({
+import FollowUser from '@/components/follow-user'
+/* ImagePreview({
   images: [
     'https://img.yzcdn.cn/vant/apple-1.jpg',
     'https://img.yzcdn.cn/vant/apple-2.jpg'
@@ -110,13 +109,13 @@ ImagePreview({
   // 预览图片的起始位置
   startPosition: 1,
   // 点击关闭
-  onClose () {
+  onClose() {
     // do something
   }
-})
+}) */
 export default {
   name: 'ArticleIndex',
-  components: {},
+  components: { FollowUser },
   props: {
     articleId: {
       type: [Number, String, Object],
@@ -128,7 +127,7 @@ export default {
       article: {}, // 文章详情
       isLoading: false,
       errStatus: 0,
-      is_follow: false
+      followLoading: false
     }
   },
   computed: {},
@@ -181,8 +180,7 @@ export default {
           })
         }
       })
-    },
-    onFollow() {}
+    }
   }
 }
 </script>
